@@ -5,6 +5,7 @@ import Control.Exception
 import Data.List
 import Constants
 import State_Estimation
+import Common_Equations
 
 main :: IO ()
 main = do 
