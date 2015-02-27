@@ -17,7 +17,41 @@ module Common_Equations
 ,m
 ,uDot
 ,vDot
-,wDot) where  
+,wDot
+,deltaAlpha
+,deltaBeta
+,deltaDeltaE
+,deltaDeltaA
+,deltaDeltaR
+,cSBarD
+,cSBarY
+,cSBarL
+,cSBarl
+,cSBarm
+,cSBarn
+,qBar
+,xa
+,ya
+,za
+,la
+,ma
+,na
+,vtDot
+,alphaDot
+,betaDot
+,phiDot
+,thetaDot
+,psiDot
+,pDot
+,qDot
+,rDot
+,deltaTDot
+,deltaEDot
+,deltaADot
+,deltaRDot
+,pNDot
+,pEDot
+,pDDot) where  
 
 import Constants
 
