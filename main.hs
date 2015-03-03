@@ -7,23 +7,36 @@ import Constants
 import State_Estimation
 import Common_Equations
 
+
+init_f :: [Float]
+init_f = []
+
 main :: IO ()
-main = do 
+main  = do 
        inh <- openFile "input.csv" ReadMode
        outh <- openFile "output.txt" WriteMode
-       mainloop inh outh
+       mainloop inh outh init_f
        hClose inh
        hClose outh
 
-mainloop :: Handle -> Handle -> IO ()
-mainloop inh outh = 
+mainloop :: Handle -> Handle -> [Float] -> IO ()
+mainloop inh outh [] = 
     do ineof <- hIsEOF inh
        if ineof
            then return ()
            else do 
 								inp <- hGetLine inh
-								print (getState (state inp))
-								mainloop inh outh
+								prev_state <- (getState (state inp) [])
+								mainloop inh outh prev_state
+mainloop inh outh prev_state = 
+    do ineof <- hIsEOF inh
+       if ineof
+           then return ()
+           else do 
+								inp <- hGetLine inh
+								print (getState (state inp) prev_state)
+								prev_state <- (getState (state inp) prev_state)
+								mainloop inh outh prev_state
 
 
 									 
@@ -31,9 +44,11 @@ mainloop inh outh =
 
 
 --helper functions to parse string from file in mainloop											 
-getState :: [String] -> [Float]
-getState xs = let [phi,theta, psi, p, q, r, lat, lon, alt, vnorth, veast, vdown, rc_throttle, rc_ele, rc_ail, rc_rudder, vt, alpha, beta] = map read xs
-	    in stateOutput [phi,theta, psi, p, q, r, lat, lon, alt, vnorth, veast, vdown, rc_throttle, rc_ele, rc_ail, rc_rudder, vt, alpha, beta]
+getState :: [String] -> [Float] -> [Float]
+getState xs [] = let [phi,theta, psi, p, q, r, lat, lon, alt, vnorth, veast, vdown, rc_throttle, rc_ele, rc_ail, rc_rudder, vt, alpha, beta] = map read xs
+	    in stateOutput [phi,theta, psi, p, q, r, lat, lon, alt, vnorth, veast, vdown, rc_throttle, rc_ele, rc_ail, rc_rudder, vt, alpha, beta] []
+getState xs ys = let [phi,theta, psi, p, q, r, lat, lon, alt, vnorth, veast, vdown, rc_throttle, rc_ele, rc_ail, rc_rudder, vt, alpha, beta] = map read xs
+	    in stateOutput [phi,theta, psi, p, q, r, lat, lon, alt, vnorth, veast, vdown, rc_throttle, rc_ele, rc_ail, rc_rudder, vt, alpha, beta] ys
 
 state :: String -> [String]
 state xs = (take 19  (sample xs))
