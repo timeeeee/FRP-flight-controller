@@ -35,6 +35,7 @@ mainloop inh outh prev =
 								inp <- hGetLine inh
 								--print to screen the result of getState
 								print prev
+								hPrint outh prev
 								mainloop inh outh (getState (state inp))
 
 
