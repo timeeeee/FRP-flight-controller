@@ -16,7 +16,7 @@ main = do
        hClose outh
 
 
-mainloop :: Handle -> Handle -> [Float] -> IO ()
+mainloop :: Handle -> Handle -> [[Float]] -> IO ()
 mainloop inh outh [] = 
     do ineof <- hIsEOF inh
        if ineof
@@ -41,8 +41,8 @@ mainloop inh outh prev =
 --helper functions to parse string from file in mainloop			
 
 --turn the string into a list of floats								 
-getState :: [String] -> [Float]
-getState xs = map read xs
+getState :: [String] -> [[Float]]
+getState xs = stateOutput (map read xs) []
 	    
 --turn the string into a list of string items
 state :: String -> [String]

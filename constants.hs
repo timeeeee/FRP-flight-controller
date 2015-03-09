@@ -52,6 +52,9 @@ module Constants
 , rho
 , k_states) where  
 
+
+--these values are from newvars_1_60 for the yak_54 33%
+
 --Engine Constants
 xT0 :: Float
 xT0 = 0.00

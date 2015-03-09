@@ -60,8 +60,6 @@ xt :: Float -> Float
 xt throttle = ((((throttle * 100)*(throttle * 100)) * xT2) + (xT1 * (throttle*100)) + (xT0))
 
 
-
-
 --moment functions
 c1 :: Float -> Float
 c1 delta = ((((iyyB + izzB) * izzB) + (ixzB * ixzB)) / delta)
@@ -103,9 +101,6 @@ v vt beta = (vt * (sin beta))
 w vt alpha beta = (vt * (sin alpha) * (cos beta))
 
 -- BODY ACCELERATION COMPONENTS
--- these require u v w, p q r, gravity, phi theta, xt(engine thrust) xa ya za(aerodynamic forces)
-
-
 --mass
 m = (weight/g)
 
@@ -157,7 +152,8 @@ cSBarm alpha deltaE deltaAlphaDot deltaq deltau uTrim =
 -- YAWING MOMENT COEFFICIENT
 cSBarn beta deltaA deltaR deltaBetaDot deltap deltar uTrim =
 	((cnbeta * beta) + (cndeltaA * deltaA) + (cndeltaR * deltaR) + (cnbetaDot * ((deltaBetaDot * b)/(2*uTrim))) + (cnp * ((deltap * b)/(2*uTrim))) + (cnr * ((deltar * b)/(2*uTrim))))
-  
+
+
 --cx cSBarD cSBarL = (((- (cSBarD)) * (cos alphaTrim)) + (cSBarL * (sin alphaTrim)))
 --cy cSBarY = (cSBarY)
 --cz cSbarD cSBarL = (((- (cSBarD)) * (sin alphaTrim)) + (cSBarL * (cos alphaTrim)))
