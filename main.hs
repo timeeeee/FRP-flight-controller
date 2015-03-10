@@ -5,7 +5,7 @@ import Control.Exception
 import Data.List
 import Constants
 import State_Estimation
-import Common_Equations
+--import Common_Equations
 
 main :: IO ()
 main = do 
@@ -24,7 +24,6 @@ mainloop inh outh [] =
            else do 
 								--get samples from file
 								inp <- hGetLine inh
-								--print to screen the result of getState
 								mainloop inh outh (getState (state inp))
 mainloop inh outh prev = 
     do ineof <- hIsEOF inh
@@ -33,7 +32,7 @@ mainloop inh outh prev =
            else do 
 								--get samples from file
 								inp <- hGetLine inh
-								--print to screen the result of getState
+								--print to screen the result of t-1 getState
 								print prev
 								hPrint outh prev
 								mainloop inh outh (getState (state inp))
