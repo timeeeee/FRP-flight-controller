@@ -5,11 +5,26 @@ import Constants
 --import Common_Equations
 
 
+
+-- stateOutput INPUT:
+--							xs -	List of Current Measurements
+--							ys -  List of Lists (3)
+--										1 - previous output of stateObserver
+--										2 - previous output of navigationObserver
+--										3 - previous list of measurements
+--						OUTPUT:
+--							List of Lists (3)
+--										1 - output of stateObserver
+--										2 - output of navigationObserver
+--										3 - list of measurements
+
 stateOutput :: [Float] -> [[Float]] -> [[Float]]
 stateOutput xs [] = [stateObserver xs [] [],	navigationObserver xs [] [], xs]
 stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs (ys !! 1) (ys !! 2), xs ]
 
 
+
+-- PART ONE - STATE OBSERVER
 -- stateObserver INPUT: 
 -- 								(vt, alpha, beta)
 -- body rates			(p, q, r)
@@ -24,7 +39,6 @@ stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs
 --					biases_est NOTE:last TWO items in list)
 
 
--- PART ONE - STATE OBSERVER
 -- Note: xs is the current measurement,  ys is previous observer output, zs is the k-1 measurement
 stateObserver :: [Float] -> [Float] -> [Float] -> [Float]
 stateObserver xs [] []  = -- gforce to fps, then into ekf
@@ -69,6 +83,8 @@ x_est_ xs ys = xs
 k_function :: [Float] -> [Float] -> [Float]
 k_function xs [] = xs
 k_function xs ys = xs
+
+
 							
 -- PART TWO - NAVIGATION OBSERVER							
 navigationObserver :: [Float] -> [Float] -> [Float]	-> [Float]						
