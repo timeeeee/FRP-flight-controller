@@ -582,8 +582,8 @@ vTtrim			= 45.8083
 --w34d
 
 --NOTE: THIS WAS A SET OF ROWS IN NEWVARS!
-x_maxXin :: [Float]
-x_maxXin	= [168,0.2000,0.0100,1.0,0.5000,1.0,0.2000]
+x_maxXin :: [[Float]]
+x_maxXin	= [[168],[0.2000],[0.0100],[1.0],[0.5000],[1.0],[0.2000]]
 
 x_maxXout :: Float
 x_maxXout	= 0.2000
@@ -595,8 +595,8 @@ x_maxYout :: Float
 x_maxYout	= 1.0
 
 --NOTE: THIS WAS A SET OF ROWS IN NEWVARS!
-x_minXin :: [Float]
-x_minXin	= [162,-0.2000,-0.0100,-1.0,-0.5000,0.1000,-0.2000]
+x_minXin :: [[Float]]
+x_minXin	= [[162],[-0.2000],[-0.0100],[-1.0],[-0.5000],[0.1000],[-0.2000]]
 
 x_minXout :: Float
 x_minXout	= 0.0100
@@ -608,8 +608,8 @@ x_minYout :: Float
 x_minYout	= -1.0
 
 --NOTE: THIS WAS A SET OF ROWS IN NEWVARS!
-y_maxXin :: [Float]
-y_maxXin	= [168,0.0100,2.0,1.0,0.2000,0.6000,0.5000]
+y_maxXin :: [[Float]]
+y_maxXin	= [[168],[0.0100],[2.0],[1.0],[0.2000],[0.6000],[0.5000]]
 
 y_maxXout :: Float
 y_maxXout	= 0.2000
@@ -621,8 +621,8 @@ y_maxYout :: Float
 y_maxYout	= 1.0
 
 --NOTE: THIS WAS A SET OF ROWS IN NEWVARS!
-y_minXin :: [Float]
-y_minXin	= [162,-0.0100,-2.0,-1.0,-0.2000,-0.6000,-0.5000]
+y_minXin :: [[Float]]
+y_minXin	= [[162],[-0.0100],[-2.0],[-1.0],[-0.2000],[-0.6000],[-0.5000]]
 
 y_minXout :: Float
 y_minXout	= -0.2000
@@ -634,8 +634,8 @@ y_minYout :: Float
 y_minYout	= -1.0
 
 --NOTE: THIS WAS A SET OF ROWS IN NEWVARS!
-z_maxXin :: [Float]
-z_maxXin	= [168,0.200000000000000,0.0100000000000000,1,0.500000000000000,1,0.200000000000000]
+z_maxXin :: [[Float]]
+z_maxXin	= [[168.0],[0.200000000000000],[0.0100000000000000],[1.0],[0.500000000000000],[1.0],[0.200000000000000]]
 
 z_maxXout :: Float
 z_maxXout	= -0.5000
@@ -647,8 +647,8 @@ z_maxYout :: Float
 z_maxYout	= 1.0
 
 --NOTE: THIS WAS A SET OF ROWS IN NEWVARS!
-z_minXin :: [Float]
-z_minXin	= [162,-0.200000000000000,-0.0100000000000000,-1,-0.500000000000000,0.100000000000000,-0.200000000000000]
+z_minXin :: [[Float]]
+z_minXin	= [[162],[-0.200000000000000],[-0.0100000000000000],[-1],[-0.500000000000000],[0.100000000000000],[-0.200000000000000]]
 
 z_minXout :: Float
 z_minXout	= -3.0

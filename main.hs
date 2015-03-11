@@ -24,7 +24,7 @@ mainloop inh outh [] =
            else do 
 								--get samples from file
 								inp <- hGetLine inh
-								mainloop inh outh (getState (state inp))
+								mainloop inh outh (getState (state inp) [])
 mainloop inh outh prev = 
     do ineof <- hIsEOF inh
        if ineof
@@ -32,17 +32,18 @@ mainloop inh outh prev =
            else do 
 								--get samples from file
 								inp <- hGetLine inh
-								--print to screen the result of t-1 getState
+								--print to screen (and file) the result of t-1 getState
 								print prev
 								hPrint outh prev
-								mainloop inh outh (getState (state inp))
+								mainloop inh outh (getState (state inp) prev)
 
 
 --helper functions to parse string from file in mainloop			
 
 --turn the string into a list of floats								 
-getState :: [String] -> [[Float]]
-getState xs = stateOutput (map read xs) []
+getState :: [String] -> [[Float]] -> [[Float]]
+getState xs [] = stateOutput (map read xs) []
+getState xs ys = stateOutput (map read xs) ys
 	    
 --turn the string into a list of string items
 state :: String -> [String]
