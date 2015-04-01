@@ -1,0 +1,28 @@
+common_equations.hs
+  purpose:
+  status:
+
+constants.hs
+  purpose:
+  status:
+
+flight_test_data
+  contents: flight1_Oct10_2014.csv flight2_Oct10_2014.csv flight_data_dec.csv
+  purpose:
+  status:
+
+main.hs
+  purpose:
+  status:
+
+makefile
+  purpose: compile project to single binary executable
+  status: functional
+  
+results.txt, output.txt
+  purpose:
+  status: just for checking results- in gitignore
+
+state_estimation.hs
+  purpose:
+  status:
