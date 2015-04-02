@@ -1,3 +1,8 @@
+EECS_582: Computer Science Senior Design 
+Flight Systems
+Tim Clark and Angie Wright
+April 1st, 2015
+
 common_equations.hs
   purpose:
   status:
@@ -26,3 +31,7 @@ results.txt, output.txt
 state_estimation.hs
   purpose:
   status:
+	
+matrix_ops.hs
+	purpose:
+	status:
