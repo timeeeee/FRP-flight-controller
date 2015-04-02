@@ -2,7 +2,11 @@ module State_Estimation
 (stateOutput) where  
 
 import Constants
+import Matrix_Ops
+
 --import Common_Equations
+
+
 
 
 
@@ -138,7 +142,3 @@ navigationObserver xs ys zs = ekf xs ys zs
 
 --
 
-f :: [Float] -> [Float] -> Float -> [Float]
-f xs ys alphaDot_1 = xs
-
-h xs = xs
