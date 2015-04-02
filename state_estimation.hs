@@ -63,67 +63,92 @@ stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs
 --								alphaDot, alphaDot1										(18,19)
 
 
--- Note: xs is the current measurement,  ys is previous observer output, zs is the k-1 measurement
+-- DONE
+-- Summary Note: xs is the current measurement,  ys is previous observer output, zs is the k-1 measurement
 stateObserver :: [Float] -> [Float] -> [Float] -> [Float]
 stateObserver xs [] []  = -- gforce to fps, then into ekf
 											gainBias(ekf (gainAcc xs) [] [])
 stateObserver xs ys zs = gainBias(ekf (gainAcc xs) ys zs)
 												
 												
--- helper functions for stateObserver --**NOT COMPLETE
+-- helper functions for stateObserver 
+-- ekf
+-- **NOT COMPLETE
 ekf :: [Float] -> [Float] -> [Float] -> [Float]	
 ekf xs [] [] = (let (beginX, endX) = (splitAt 9 xs)
 								in (subElem (y_ beginX) (y_est_ (x_est_ endX []))) ++ (k_function endX []))
 ekf xs ys zs = let ((beginX, endX),(beginZ, endZ)) = ((splitAt 9 xs),(splitAt 9 zs))
 								in (subElem (y_ beginX) (y_est_ (x_est_ endZ ys))) ++ (k_function endZ ys)
 												
--- adding gain to acceleration data to transform to g-force to fps2
+-- DONE adding gain to acceleration data to transform to g-force to fps2
 gainAcc :: [Float] -> [Float]
 gainAcc xs = --split at acc and rebuild
 							let (begin,end) = splitAt 12 xs   in begin ++ [(g + (end !! 0))] ++ [g + (end !! 1)] ++ [g + (end !! 2)] ++ (drop 3 end)
 
--- adding gain to bias elements
+-- DONE adding gain to bias elements
 gainBias :: [Float] -> [Float]
 gainBias xs = --split at bias and rebuild
 							let (begin,end) = splitAt 13 xs   in begin ++ [1 + (end !! 0)] ++ [1 + (end !! 1)] ++ (drop 2 end)
 							
 
--- for function y_ -- This list is already in the order and format that is needed
+-- DONE for function y_ -- This list is already in the order and format that is needed
 -- the function y_ is just to stay consistant with the matching block in Simulink
 y_ :: [Float] -> [Float]
 y_ xs = xs 
 
--- y_est_ only calls h_function with output from e_est_
+-- DONE y_est_ 
+-- INPUT: output from e_est_
+-- OUTPUT: output from h_function
 y_est_ :: [Float] -> [Float]
 y_est_ xs = (h_function xs)
 
---calls f_function with xs = (t-1 state observer ouput) and ys = (t-1 measurements)
+-- x_est_
+-- **NOT COMPLETE
+-- INPUT: xs - (t-1 state observer ouput) and 
+--				ys - (t-1 measurements)
+--OUTPUT: adjusted return value of f_function
 x_est_ :: [Float] -> [Float] -> [Float]
 x_est_ xs [] = xs
 x_est_ xs ys = (f_function xs ys)
 
+-- k_function
+-- **NOT COMPLETE
+-- INPUT: xs - return value of x_est_ of t-1
+--				ys - return value of k_function of t-1
+-- OUTPUT: 
 k_function :: [Float] -> [Float] -> [Float]
 k_function xs [] = xs
-k_function xs ys = xs
+k_function xs ys = xs ++ ys
 
--- output f_x acc_meas_est alpha_Dot
+-- f_function 
+-- *NOTE that inputs for f_function are the same as inputs to k_function
+--				these should be computed only once if possible (in ekf?)
+-- **NOT COMPLETE
+-- INPUT:	xs - return value of x_est_ of t-1
+--				ys - return value of k_function of t-1
+-- OUTPUT:
 f_function :: [Float] -> [Float] -> [Float]
 f_function [] [] = []
 f_function xs ys = xs ++ ys
 
+-- **NOT COMPLETE
 h_function :: [Float] -> [Float]
 h_function xs = xs
 
 --helper functions for ekf
+-- DONE
 subElem :: [Float] -> [Float] -> [Float]
 subElem xs ys = (map sub1 (zip xs ys))
 
+-- DONE
 sub1 :: (Float,Float) -> Float
 sub1 x = (fst x) - (snd x)
 
+-- DONE
 addElem :: [Float] -> [Float] -> [Float]
 addElem xs ys = (map sub1 (zip xs ys))
 
+-- DONE
 add1 :: (Float,Float) -> Float
 add1 x = (fst x) + (snd x)
 
