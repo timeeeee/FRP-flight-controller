@@ -1,4 +1,4 @@
-module Constants  
+module Constants  --these values are from newvars_4_25 for the Bird of Time Sailplane
 ( --a_W1 
 --a_W2 
 --a_W3
@@ -239,7 +239,9 @@ infinity = 1.0 / 0.0
 negativeInfinity :: Float
 negativeInfinity = (-1.0) / 0.0
 
---these values are from newvars_4_25 for the Bird of Time Sailplane
+type Vector = [Float]
+type Matrix = [[Float]]
+
 --a_W1 (4x4 matrix)
 --a_W2 (4x4 matrix)
 --a_W3 (4x4 matrix)

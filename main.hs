@@ -48,6 +48,9 @@ getState xs ys = stateOutput (map read xs) ys
 --turn the string into a list of string items
 state :: String -> [String]
 state xs = (take 19  (sample xs))
+
+--splitting the string at comma
+sample :: String -> [String]
 sample xs = 	split ',' xs
 						
 --split the string						
