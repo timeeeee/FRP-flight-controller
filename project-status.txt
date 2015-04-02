@@ -3,34 +3,56 @@ Flight Systems
 Tim Clark and Angie Wright
 April 1st, 2015
 
-common_equations.hs
-  purpose:
-  status:
 
-constants.hs
-  purpose:
-  status:
-
-flight_test_data
+flight_test_data (folder)
   contents: flight1_Oct10_2014.csv flight2_Oct10_2014.csv flight_data_dec.csv
-  purpose:
-  status:
+  purpose:	historical flight data
+  status:		not being used 
+	
+angies_older (folder)
+purpose: legacy
 
-main.hs
-  purpose:
-  status:
+aircraft_4 (folder)
+purpose: the files from simulink/matlab that we are re-coding
+status: up to date
+
+input.csv
+purpose: trimmed and formatted flight data file 
+status:  in-use -- needs replaced with generated data file for this aircraft
 
 makefile
   purpose: compile project to single binary executable
   status: functional
+	
+common_equations.hs
+  purpose: 	old function definition file
+  status:		being used as reference
+
+constants.hs
+  purpose:	constant values used by state observer and nav observer
+  status:		needs trimmed to only values used in this application
+
+main.hs
+  purpose: file i/o for current value readings and passing of previous values (t-1)
+  status:  complete
+
+matrix_ops.hs
+	purpose: new module to extract operations being used in state_estimation.hs
+	status:  needs rebuilt or restored from previous... I messed up and deleted contents-AW
+	
+state_estimation.hs
+  purpose: run state observer and navigation observer
+  status:		active in development right now
+
+output.txt
+  purpose: output the results of running the program
+  status:	working
   
 results.txt, output.txt
   purpose:
   status: just for checking results- in gitignore
 
-state_estimation.hs
-  purpose:
-  status:
+
 	
 matrix_ops.hs
 	purpose:
