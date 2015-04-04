@@ -20,7 +20,7 @@ sub1 x = (fst x) - (snd x)
 
 -- DONE
 addElem :: Vector -> Vector -> Vector
-addElem xs ys = (map sub1 (zip xs ys))
+addElem xs ys = (map add1 (zip xs ys))
 
 -- DONE
 add1 :: (Float,Float) -> Float

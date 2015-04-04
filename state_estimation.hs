@@ -6,6 +6,7 @@ import Matrix_Ops
 
 --import Common_Equations
 
+-- DONE
 -- stateOutput INPUT:
 --							xs -	List of Current Measurements
 --							ys -  List of Lists (3)
@@ -22,8 +23,12 @@ stateOutput :: [Float] -> [[Float]] -> [[Float]]
 stateOutput xs [] = [stateObserver xs [] [],	navigationObserver xs [] [], xs]
 stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs (ys !! 1) (ys !! 2), xs ]
 
+
+
 -- PART ONE - STATE OBSERVER
--- stateObserver INPUT xs - current time t: 
+
+-- STILL TO DO: get waypoint info added - this is needed for navigationObserver
+-- stateObserver INPUT xs - current time t: 						(index address into list)
 -- 								(vt, alpha, beta)											(0,1,2)
 -- body rates			(p, q, r)															(3,4,5)
 -- magnetic flux 	(hx_body, hy_body, hz_body)						(6,7,8)
@@ -63,12 +68,12 @@ stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs
 --								alphaDot, alphaDot1										(18,19)
 
 
--- DONE
+
 -- Summary Note: xs is the current measurement,  ys is previous observer output, zs is the k-1 measurement
 stateObserver :: [Float] -> [Float] -> [Float] -> [Float]
 stateObserver xs [] []  = -- gforce to fps, then into ekf
-											gainBias(ekf (gainAcc xs) [] [])
-stateObserver xs ys zs = gainBias(ekf (gainAcc xs) ys zs)
+													gainBias(ekf (gainAcc xs) [] [])
+stateObserver xs ys zs = 	gainBias(ekf (gainAcc xs) ys zs)
 												
 												
 -- helper functions for stateObserver 
@@ -103,13 +108,35 @@ y_est_ :: [Float] -> [Float]
 y_est_ xs = (h_function xs)
 
 -- x_est_
--- **NOT COMPLETE
+-- Done
 -- INPUT: xs - (t-1 state observer ouput) and 
 --				ys - (t-1 measurements)
 --OUTPUT: adjusted return value of f_function
 x_est_ :: [Float] -> [Float] -> [Float]
 x_est_ xs [] = xs
-x_est_ xs ys = (f_function xs ys)
+x_est_ xs ys = (gainDt (f_function xs ys) xs)
+
+--gainDt - this adds dt to the f_x subset of xs and then vector adds the result to xs
+--INPUT: 				xs
+--								fTHL_o,fEL_o,fAIL_o,fRDR_o, (0,1,2,3)
+--								fVT_o,falpha_o,fbeta_o,			(4,5,6)
+--								fphi_o,ftheta_o,fpsi_o,			(7,8,9)
+--								fP_o,fQ_o,fR_o,							(10,11,12)
+--								falphab_o,fbetab_o,					(13,14)
+--								alphadot_o_1,								(15)
+--								accelX_o,accelY_o,accelZ_o	(16,17,18)
+--							ys
+-- 								throttle, elevator, aileron, rudder 	(0,1,2,3)
+--								vt_est, alpha_est, beta_est, 					(4,5,6)
+--  							phi_est, theta_est, psi_est, 					(7,8,9)
+--								p_est, q_est, r_est, 									(10,11,12)
+--								biases_est													  (13,14)
+--								axb, ayb, azb, 												(15,16,17)
+--								alphaDot, alphaDot1										(18,19)
+--OUTPUT: 
+gainDt :: [Float] -> [Float]
+gainDt xs ys = --split at bias and rebuild
+							let (begin,end) = let (begin,end) = splitAt 13 xs   in (addElem (begin ++ [1 + (end !! 0)] ++ [1 + (end !! 1)] ++ (drop 2 end)) 
 
 -- k_function
 -- **NOT COMPLETE
@@ -175,14 +202,28 @@ k_function xs ys = xs ++ ys
 
 -- ** note: this is porting the correct size of output, taken from input values
 -- needs common equations module added and used to build up output list composed of 
--- running functions
+-- results of functions
 f_function :: [Float] -> [Float] -> [Float]
 f_function [] [] = []
 f_function xs ys = xs ++ (drop 4 ys)
 
--- **NOT COMPLETE
+-- DONE h_function
+-- INPUTS
+--		fTHL_o,fEL_o,fAIL_o,fRDR_o, (0,1,2,3)
+--		fVT_o,falpha_o,fbeta_o,			(4,5,6)
+--		fphi_o,ftheta_o,fpsi_o,			(7,8,9)
+--		fP_o,fQ_o,fR_o,							(10,11,12)
+--		falphab_o,fbetab_o,					(13,14)
+--		alphadot_o_1,								(15)
+--		accelX_o,accelY_o,accelZ_o	(16,17,18)
+
+-- OUTPUTS
+-- hVT_o,halpha_o,hbeta_o,				(0,1,2)
+-- hP_o,hQ_o,hR_o,								(3,4,5)
+-- hHxbody_o,hHybody_o,hHzbody_o 	(6,7,8)
 h_function :: [Float] -> [Float]
-h_function xs = xs
+h_function xs = ((xs !! 4) ++ ((xs !! 5) + (xs !! 13)) ++ ((xs !! 6) + (xs !! 14)) ++ (xs !! 10) ++ (xs !! 11) ++ (xs !! 12) ++ (((xs !! 16) * cos (xs !! 8) * cos(xs !! 9)) + ((xs !! 17) * cos((xs !! 8)) * sin(xs !! 9)) - ((xs !! 18)*sin((xs !! 8)))) ++(((xs !! 16) * (sin(xs !! 7) * sin (xs !! 8) * cos(xs !! 9) - cos(xs !! 7) * sin (xs !! 9))) + ((xs !! 17) * (sin (xs !! 7) * sin (xs !! 8) * sin (xs !! 9) + cos (xs !! 7) * cos (xs !! 9))) + ((xs !! 18)*sin(xs !! 7)*cos((xs !! 8)))) ++(((xs !! 16) * (cos (xs !! 7) * sin (xs !! 8) * cos(xs !! 9) + sin(xs !! 7) * sin (xs !! 9))) +          ((xs !! 17) * (cos (xs !! 7) * sin (xs !! 8) * sin (xs !! 9) - sin (xs !! 7) * cos (xs !! 9))) +          ((xs !! 18) * cos (xs !! 7) * cos (xs !! 8))))
+
 
 
 
