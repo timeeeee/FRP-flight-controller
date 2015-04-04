@@ -3,6 +3,7 @@ module Matrix_Ops
 ,Matrix
 ,subElem
 ,addElem
+,mulElem
 ) where 
 -- source: http://www2.math.ou.edu/~dmccullough/teaching/f06-6833/haskell/matrix.pdf
 
@@ -26,10 +27,10 @@ addElem xs ys = (map add1 (zip xs ys))
 add1 :: (Float,Float) -> Float
 add1 x = (fst x) + (snd x)
 
+-- DONE
+mulElem :: Vector -> Vector -> Vector
+mulElem xs ys = (map mul1 (zip xs ys))
 
-
-vectorScalarMultiply :: Vector -> Vector 
-
-matrixScalarMultiply :: Matrix -> Matrix
-
-matrixMultiply :: Matrix -> Matrix
+-- DONE
+mul1 :: (Float,Float) -> Float
+mul1 x = (fst x) * (snd x)

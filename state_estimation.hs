@@ -134,9 +134,9 @@ x_est_ xs ys = (gainDt (f_function xs ys) xs)
 --								axb, ayb, azb, 												(15,16,17)
 --								alphaDot, alphaDot1										(18,19)
 --OUTPUT: 
-gainDt :: [Float] -> [Float]
+gainDt :: [Float] -> [Float] -> [Float] 
 gainDt xs ys = --split at bias and rebuild
-							let (begin,end) = let (begin,end) = splitAt 13 xs   in (addElem (begin ++ [1 + (end !! 0)] ++ [1 + (end !! 1)] ++ (drop 2 end)) 
+							let (begin,end) = splitAt 13 xs   in (addElem (begin ++ [1 + (end !! 0)] ++ [1 + (end !! 1)] ++ (drop 2 end)) ys)
 
 -- k_function
 -- **NOT COMPLETE
@@ -151,9 +151,11 @@ gainDt xs ys = --split at bias and rebuild
 -- 					THLcmd_o,ELcmd_o,AILcmd_o,RDRcmd_o, 			 (servo commands t-1) (0,1,2,3)
 -- 					accelX_meas_o,accelY_meas_o,accelZ_meas_o, (accelerometer t-1)	(4,5,6)
 -- OUTPUT: 
+
 k_function :: [Float] -> [Float] -> [Float]
+
 k_function xs [] = xs
-k_function xs ys = xs ++ ys
+k_function xs ys = (xs ++ ys)
 
 -- f_function 
 -- *NOTE that inputs for f_function are the same as inputs to k_function
@@ -207,7 +209,7 @@ f_function :: [Float] -> [Float] -> [Float]
 f_function [] [] = []
 f_function xs ys = xs ++ (drop 4 ys)
 
--- DONE h_function
+-- h_function
 -- INPUTS
 --		fTHL_o,fEL_o,fAIL_o,fRDR_o, (0,1,2,3)
 --		fVT_o,falpha_o,fbeta_o,			(4,5,6)
@@ -222,7 +224,12 @@ f_function xs ys = xs ++ (drop 4 ys)
 -- hP_o,hQ_o,hR_o,								(3,4,5)
 -- hHxbody_o,hHybody_o,hHzbody_o 	(6,7,8)
 h_function :: [Float] -> [Float]
-h_function xs = ((xs !! 4) ++ ((xs !! 5) + (xs !! 13)) ++ ((xs !! 6) + (xs !! 14)) ++ (xs !! 10) ++ (xs !! 11) ++ (xs !! 12) ++ (((xs !! 16) * cos (xs !! 8) * cos(xs !! 9)) + ((xs !! 17) * cos((xs !! 8)) * sin(xs !! 9)) - ((xs !! 18)*sin((xs !! 8)))) ++(((xs !! 16) * (sin(xs !! 7) * sin (xs !! 8) * cos(xs !! 9) - cos(xs !! 7) * sin (xs !! 9))) + ((xs !! 17) * (sin (xs !! 7) * sin (xs !! 8) * sin (xs !! 9) + cos (xs !! 7) * cos (xs !! 9))) + ((xs !! 18)*sin(xs !! 7)*cos((xs !! 8)))) ++(((xs !! 16) * (cos (xs !! 7) * sin (xs !! 8) * cos(xs !! 9) + sin(xs !! 7) * sin (xs !! 9))) +          ((xs !! 17) * (cos (xs !! 7) * sin (xs !! 8) * sin (xs !! 9) - sin (xs !! 7) * cos (xs !! 9))) +          ((xs !! 18) * cos (xs !! 7) * cos (xs !! 8))))
+h_function xs = xs
+--[xs !! 4] ++ addElem [xs !! 5] [xs !! 13] ++ addElem [xs !! 6] [xs !! 14] ++ [xs !! 10] ++ [xs !! 11] ++ [xs !! 12] ++ [0.00] ++ [0.00] ++ [0.00]
+
+
+--( ++ (addElem (mulElem (mulElem [xs !! 16] [cos (xs !! 8)]) [cos (xs !! 9)]) (mulElem (mulElem [xs !! 17] (cos [xs !! 8])) (sin [xs !! 9]))))
+-- - ([xs !! 18] * sin [xs !! 8])) ++ (([xs !! 16] * (sin [xs !! 7] * sin [xs !! 8] * cos [xs !! 9] - cos [xs !! 7] * sin [xs !! 9])) + ([xs !! 17] * (sin [xs !! 7] * sin [xs !! 8] * sin [xs !! 9] + cos [xs !! 7] * cos [xs !! 9])) + ([xs !! 18] * sin [xs !! 7] * cos [xs !! 8])) ++(([xs !! 16] * (cos [xs !! 7] * sin [xs !! 8] * cos [xs !! 9] + sin [xs !! 7] * sin [xs !! 9])) + ([xs !! 17] * (cos [xs !! 7] * sin [xs !! 8] * sin [xs !! 9] - sin [xs !! 7] * cos [xs !! 9])) + ([xs !! 18] * cos [xs !! 7] * cos [xs !! 8])))
 
 
 
