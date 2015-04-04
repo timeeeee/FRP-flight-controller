@@ -113,8 +113,16 @@ x_est_ xs ys = (f_function xs ys)
 
 -- k_function
 -- **NOT COMPLETE
--- INPUT: xs - return value of x_est_ of t-1
---				ys - return value of k_function of t-1
+-- INPUT:	xs
+--					THL_o,EL_o,AIL_o,RDR_o,	(0,1,2,3)
+--          VT_o,alpha_o,beta_o,		(4,5,6)
+--					phi_o,theta_o,psi_o,		(7,8,9)
+--					P_o,Q_o,R_o,						(10,11,12)
+--          alphab_o,betab_o,				(13,14,15)
+--					alphadot_o,							(16)
+-- 				ys
+-- 					THLcmd_o,ELcmd_o,AILcmd_o,RDRcmd_o, 			 (servo commands t-1) (0,1,2,3)
+-- 					accelX_meas_o,accelY_meas_o,accelZ_meas_o, (accelerometer t-1)	(4,5,6)
 -- OUTPUT: 
 k_function :: [Float] -> [Float] -> [Float]
 k_function xs [] = xs
@@ -124,33 +132,59 @@ k_function xs ys = xs ++ ys
 -- *NOTE that inputs for f_function are the same as inputs to k_function
 --				these should be computed only once if possible (in ekf?)
 -- **NOT COMPLETE
--- INPUT:	xs - return value of x_est_ of t-1
---				ys - return value of k_function of t-1
+
+-- INPUT:	xs
+--					THL_o,EL_o,AIL_o,RDR_o,	(0,1,2,3)
+--          VT_o,alpha_o,beta_o,		(4,5,6)
+--					phi_o,theta_o,psi_o,		(7,8,9)
+--					P_o,Q_o,R_o,						(10,11,12)
+--          alphab_o,betab_o,				(13,14)
+--					alphadot_o_1,						(15)
+-- 				ys
+-- 					THLcmd_o,ELcmd_o,AILcmd_o,RDRcmd_o, 			 (servo commands t-1) (0,1,2,3)
+-- 					accelX_meas_o,accelY_meas_o,accelZ_meas_o, (accelerometer t-1)	(4,5,6)
+-- PARAMETERS                  
+--				constant rho,...
+--				constant S,Cbar,b,weight,g,IxxB,IyyB,IzzB,IxzB,...
+--				constant CD0,CDu,CDa,CDq,CDadot,CDde,...
+--				constant CD0_bar,...
+--				constant Cyb,Cyp,Cyr,Cyda,Cydr,...
+--				constant CL0,CLa,CLq,CLadot,CLu,CLde,...
+--				constant Clb,Clp,Clr,Clda,Cldr,...
+--				constant Cm0,Cma,Cmq,Cmadot,Cmu,Cmde,...
+--				constant Cnb,Cnp,Cnr,Cnda,Cndr,...
+--				constant xT0,xT1,xT2,...
+--				constant Ptrim,Qtrim,Rtrim,Utrim,...
+--				constant Athrottle,Bthrottle,...
+--				constant Aelevator,Belevator,...
+--				constant Aaileron,Baileron,...
+--				constant Arudder,Brudder,...
+--				constant ThrottleMax,ThrottleMin,...
+--				constant ElevatorMax,ElevatorMin,...
+--				constant AileronMax,AileronMin,...
+--				constant RudderMax,RudderMin)
+
 -- OUTPUT:
+--fTHL_o,fEL_o,fAIL_o,fRDR_o, (0,1,2,3)
+--fVT_o,falpha_o,fbeta_o,			(4,5,6)
+--fphi_o,ftheta_o,fpsi_o,			(7,8,9)
+--fP_o,fQ_o,fR_o,							(10,11,12)
+--falphab_o,fbetab_o,					(13,14)
+--alphadot_o_1,								(15)
+--accelX_o,accelY_o,accelZ_o	(16,17,18)
+
+-- ** note: this is porting the correct size of output, taken from input values
+-- needs common equations module added and used to build up output list composed of 
+-- running functions
 f_function :: [Float] -> [Float] -> [Float]
 f_function [] [] = []
-f_function xs ys = xs ++ ys
+f_function xs ys = xs ++ (drop 4 ys)
 
 -- **NOT COMPLETE
 h_function :: [Float] -> [Float]
 h_function xs = xs
 
---helper functions for ekf
--- DONE
-subElem :: [Float] -> [Float] -> [Float]
-subElem xs ys = (map sub1 (zip xs ys))
 
--- DONE
-sub1 :: (Float,Float) -> Float
-sub1 x = (fst x) - (snd x)
-
--- DONE
-addElem :: [Float] -> [Float] -> [Float]
-addElem xs ys = (map sub1 (zip xs ys))
-
--- DONE
-add1 :: (Float,Float) -> Float
-add1 x = (fst x) + (snd x)
 
 							
 -- PART TWO - NAVIGATION OBSERVER		
