@@ -36,9 +36,9 @@ stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs
 -- accelerometer 	(axb, ayb, azb)												(13,14,15)
 -- gpsPosition    (lat, long, alt) 											(16,17,18)
 -- gpsVelocity		(vNorth, vEast, vDown)								(19,20,21)
--- waypoints			size?
 
--- ys - previous stateObserver ouput - time t-1
+
+-- ys - previous stateObserver ouput - time t-1					(index address into list)
 -- 								throttle, elevator, aileron, rudder 	(0,1,2,3)
 --								vt_est, alpha_est, beta_est, 					(4,5,6)
 --  							phi_est, theta_est, psi_est, 					(7,8,9)
@@ -48,7 +48,7 @@ stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs
 --								alphaDot, alphaDot1										(18,19)
 
 
--- zs - t-1 list of previous measurements
+-- zs - t-1 list of previous measurements								(index address into list)
 -- 								(vt, alpha, beta)											(0,1,2)
 -- body rates			(p, q, r)															(3,4,5)
 -- magnetic flux 	(hx_body, hy_body, hz_body)						(6,7,8)
@@ -56,9 +56,9 @@ stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs
 -- accelerometer 	(axb, ayb, azb)												(13,14,15)
 -- gpsPosition    (lat, long, alt) 											(16,17,18)
 -- gpsVelocity		(vNorth, vEast, vDown)								(19,20,21)
--- waypoints			size?
 
--- stateObserver OUTPUT:
+
+-- stateObserver OUTPUT:																(index address into list)
 -- 								throttle, elevator, aileron, rudder 	(0,1,2,3)
 --								vt_est, alpha_est, beta_est, 					(4,5,6)
 --  							phi_est, theta_est, psi_est, 					(7,8,9)
@@ -81,9 +81,9 @@ stateObserver xs ys zs = 	gainBias(ekf (gainAcc xs) ys zs)
 -- **NOT COMPLETE
 ekf :: [Float] -> [Float] -> [Float] -> [Float]	
 ekf xs [] [] = (let (beginX, endX) = (splitAt 9 xs)
-								in (subElem (y_ beginX) (y_est_ (x_est_ endX []))) ++ (k_function endX []))
+								in (vectorMinus (y_ beginX) (y_est_ (x_est_ endX []))) ++ (k_function endX []))
 ekf xs ys zs = let ((beginX, endX),(beginZ, endZ)) = ((splitAt 9 xs),(splitAt 9 zs))
-								in (subElem (y_ beginX) (y_est_ (x_est_ endZ ys))) ++ (k_function endZ ys)
+								in (vectorMinus (y_ beginX) (y_est_ (x_est_ endZ ys))) ++ (k_function endZ ys)
 												
 -- DONE adding gain to acceleration data to transform to g-force to fps2
 gainAcc :: [Float] -> [Float]
@@ -136,7 +136,7 @@ x_est_ xs ys = (gainDt (f_function xs ys) xs)
 --OUTPUT: 
 gainDt :: [Float] -> [Float] -> [Float] 
 gainDt xs ys = --split at bias and rebuild
-							let (begin,end) = splitAt 13 xs   in (addElem (begin ++ [1 + (end !! 0)] ++ [1 + (end !! 1)] ++ (drop 2 end)) ys)
+							let (begin,end) = splitAt 13 xs   in (vectorSum (begin ++ [1 + (end !! 0)] ++ [1 + (end !! 1)] ++ (drop 2 end)) ys)
 
 -- k_function
 -- **NOT COMPLETE
@@ -236,7 +236,7 @@ h_function xs = xs
 
 							
 -- PART TWO - NAVIGATION OBSERVER		
--- navigationObserver INPUT xs - current time t: 
+-- navigationObserver INPUT xs - current time t: 				(index address into list)
 -- 								(vt, alpha, beta)											(0,1,2)
 -- body rates			(p, q, r)															(3,4,5)
 -- magnetic flux 	(hx_body, hy_body, hz_body)						(6,7,8)
@@ -244,22 +244,26 @@ h_function xs = xs
 -- accelerometer 	(axb, ayb, azb)												(13,14,15)
 -- gpsPosition    (lat, long, alt) 											(16,17,18)
 -- gpsVelocity		(vNorth, vEast, vDown)								(19,20,21)
--- waypoints			size?
 
--- ys - navigationObserver ouput - time t-1
--- lla_est 				(lat_est, long_est, alt_est)					(0,1,2)
--- local_speed_est(vNorth_est,vEast_est,vDown_est)			(3,4,5)
--- wind_est				(wind0,wind1,wind2)										(6,7,8)
 
--- zs - measured values time t-1: 
+-- ys - previous stateObserver ouput - time t-1					(index address into list)
+-- 								throttle, elevator, aileron, rudder 	(0,1,2,3)
+--								vt_est, alpha_est, beta_est, 					(4,5,6)
+--  							phi_est, theta_est, psi_est, 					(7,8,9)
+--								p_est, q_est, r_est, 									(10,11,12)
+--								biases_est													  (13,14)
+--								axb, ayb, azb, 												(15,16,17)
+--								alphaDot, alphaDot1										(18,19)
+
+
+-- zs - t-1 list of previous measurements								(index address into list)
 -- 								(vt, alpha, beta)											(0,1,2)
 -- body rates			(p, q, r)															(3,4,5)
 -- magnetic flux 	(hx_body, hy_body, hz_body)						(6,7,8)
--- pilot commands (throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd) (9,10,11,12)
+-- servo commands (throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd) (9,10,11,12)
 -- accelerometer 	(axb, ayb, azb)												(13,14,15)
 -- gpsPosition    (lat, long, alt) 											(16,17,18)
 -- gpsVelocity		(vNorth, vEast, vDown)								(19,20,21)
--- waypoints			size?
 
 
 -- navigationObserver OUTPUT:

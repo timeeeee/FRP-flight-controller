@@ -1,36 +1,51 @@
 module Matrix_Ops
 (Vector
 ,Matrix
-,subElem
-,addElem
-,mulElem
+,numRows
+,numColumns
+,vectorScalarProduct
+,matrixScalarProduct
+,vectorSum
+,matrixSum
+,vectorMinus
+,matrixMinus
+,dotProduct
+,matrixProduct
 ) where 
 -- source: http://www2.math.ou.edu/~dmccullough/teaching/f06-6833/haskell/matrix.pdf
+import Data.List
 
 type Vector = [Float]
 type Matrix = [[Float]] 
 
 --helper functions for ekf
--- DONE
-subElem :: Vector -> Vector -> Vector
-subElem xs ys = (map sub1 (zip xs ys))
 
--- DONE
-sub1 :: (Float,Float) -> Float
-sub1 x = (fst x) - (snd x)
+numRows :: Matrix -> Int
+numRows = length
 
--- DONE
-addElem :: Vector -> Vector -> Vector
-addElem xs ys = (map add1 (zip xs ys))
+numColumns :: Matrix -> Int
+numColumns = length . head
 
--- DONE
-add1 :: (Float,Float) -> Float
-add1 x = (fst x) + (snd x)
+vectorScalarProduct :: Float -> Vector -> Vector
+vectorScalarProduct n vec = [ n * x | x <- vec ]
 
--- DONE
-mulElem :: Vector -> Vector -> Vector
-mulElem xs ys = (map mul1 (zip xs ys))
+matrixScalarProduct :: Float -> Matrix -> Matrix
+matrixScalarProduct n m = [ vectorScalarProduct n row | row <- m ]
 
--- DONE
-mul1 :: (Float,Float) -> Float
-mul1 x = (fst x) * (snd x)
+vectorSum :: Vector -> Vector -> Vector
+vectorSum = zipWith (+)
+
+matrixSum :: Matrix -> Matrix -> Matrix
+matrixSum = zipWith vectorSum
+
+vectorMinus :: Vector -> Vector -> Vector
+vectorMinus = zipWith (-)
+
+matrixMinus :: Matrix -> Matrix -> Matrix
+matrixMinus = zipWith vectorMinus
+
+dotProduct :: Vector -> Vector -> Float
+dotProduct v w = sum ( zipWith (*) v w )
+
+matrixProduct :: Matrix -> Matrix -> Matrix
+matrixProduct m n = [ map (dotProduct row) (transpose n) | row <- m ]
