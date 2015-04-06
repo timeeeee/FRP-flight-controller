@@ -3,6 +3,13 @@ Flight Systems
 Tim Clark and Angie Wright
 April 1st, 2015
 
+** april 6:
+1. bug - line 151 - each iteration is reducting the final output by two if the commented out function is in place.
+2. f_function - need to use common equations to build up this function (like h_function)
+		--use the version in Aircraft_4 folder
+3. k_function - needs built (like h_function)
+		--use the version in Aircraft_4 folder
+4. navigationObserver
 
 flight_test_data (folder)
   contents: flight1_Oct10_2014.csv flight2_Oct10_2014.csv flight_data_dec.csv

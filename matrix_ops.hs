@@ -3,6 +3,7 @@ module Matrix_Ops
 ,Matrix
 ,numRows
 ,numColumns
+,zeroVector
 ,vectorScalarProduct
 ,matrixScalarProduct
 ,vectorSum
@@ -11,6 +12,7 @@ module Matrix_Ops
 ,matrixMinus
 ,dotProduct
 ,matrixProduct
+,add
 ) where 
 -- source: http://www2.math.ou.edu/~dmccullough/teaching/f06-6833/haskell/matrix.pdf
 import Data.List
@@ -25,6 +27,9 @@ numRows = length
 
 numColumns :: Matrix -> Int
 numColumns = length . head
+
+zeroVector :: Int -> Vector
+zeroVector n = replicate n 0.0
 
 vectorScalarProduct :: Float -> Vector -> Vector
 vectorScalarProduct n vec = [ n * x | x <- vec ]
@@ -49,3 +54,8 @@ dotProduct v w = sum ( zipWith (*) v w )
 
 matrixProduct :: Matrix -> Matrix -> Matrix
 matrixProduct m n = [ map (dotProduct row) (transpose n) | row <- m ]
+
+add :: Float -> Float -> Float
+add x y =  x + y
+
+
