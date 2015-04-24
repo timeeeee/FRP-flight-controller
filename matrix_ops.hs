@@ -1,22 +1,17 @@
 module Matrix_Ops
-(Vector
-,Matrix
-,numRows
-,numColumns
-,zeroVector
+(zeroVector
 ,vectorScalarProduct
 ,matrixScalarProduct
 ,vectorSum
 ,matrixSum
 ,vectorMinus
 ,matrixMinus
-,dotProduct
 ,matrixProduct
-,add
+,toVector
 ) where 
 -- source: http://www2.math.ou.edu/~dmccullough/teaching/f06-6833/haskell/matrix.pdf
 import Data.List
-
+import GHC.Float
 type Vector = [Float]
 type Matrix = [[Float]] 
 
@@ -58,4 +53,8 @@ matrixProduct m n = [ map (dotProduct row) (transpose n) | row <- m ]
 add :: Float -> Float -> Float
 add x y =  x + y
 
+toVector :: Matrix -> Vector
+toVector m = [int2Float (numRows m)] ++ [int2Float (numColumns m)]
 
+reshape :: Matrix -> Vector
+reshape m = (transpose row) | row <- m 

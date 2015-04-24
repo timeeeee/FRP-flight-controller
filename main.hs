@@ -3,7 +3,7 @@ module Main (main) where
 import System.IO
 import Control.Exception
 import Data.List
-import Constants
+--import Constants
 import State_Estimation
 --import Common_Equations
 
@@ -47,7 +47,7 @@ getState xs ys = stateOutput (map read xs) ys
 	    
 --turn the string into a list of string items
 state :: String -> [String]
-state xs = (take 22  (sample xs))
+state xs = (take 23  (sample xs))
 
 --splitting the string at comma
 sample :: String -> [String]
