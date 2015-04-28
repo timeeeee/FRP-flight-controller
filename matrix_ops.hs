@@ -7,7 +7,8 @@ module Matrix_Ops
 ,vectorMinus
 ,matrixMinus
 ,matrixProduct
-,toVector
+,matrixSize
+,reshape
 ) where 
 -- source: http://www2.math.ou.edu/~dmccullough/teaching/f06-6833/haskell/matrix.pdf
 import Data.List
@@ -50,11 +51,9 @@ dotProduct v w = sum ( zipWith (*) v w )
 matrixProduct :: Matrix -> Matrix -> Matrix
 matrixProduct m n = [ map (dotProduct row) (transpose n) | row <- m ]
 
-add :: Float -> Float -> Float
-add x y =  x + y
-
-toVector :: Matrix -> Vector
-toVector m = [int2Float (numRows m)] ++ [int2Float (numColumns m)]
+matrixSize :: Matrix -> Vector
+matrixSize m = [int2Float (numRows m)] ++ [int2Float (numColumns m)]
 
 reshape :: Matrix -> Vector
-reshape m = (transpose row) | row <- m 
+reshape m = (m !! 0) ++ (m !! 1) ++ (m !! 2) ++ (m !! 3) ++ (m !! 4) ++ (m !! 5) ++ (m !! 6) ++ (m !! 7) ++ (m !! 8) 
+
