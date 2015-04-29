@@ -32,10 +32,12 @@ April 1st, 2015
 					 
 					 E. peron-hour estimation - lessons learned - projection of future work
 					 
-
-					
-					
-		
+Tim's todo:
+    1. Tool to graph input.csv and output.txt values
+    2. Tool to map input and navigation observer values
+    3. Tool to convert output.txt to flight gear format
+    4. K function
+    5. Move project to TK1 dev board Sunday 10		
 
 
 ** april 6:
