@@ -100,9 +100,14 @@ ekf :: [Float] -> [Float] -> [Float] -> [Float]
 ekf xs [] [] = (let (vt, alpha, beta, p, q, r, hx_body, hy_body, hz_body, throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd, axb, ayb, azb) = ((xs !! 0), (xs !! 1),(xs !! 2),(xs !! 3),(xs !! 4),(xs !! 5),(xs !! 6),(xs !! 7),(xs !! 8),(xs !! 9),(xs !! 10),(xs !! 11),(xs !! 12),(xs !! 13),(xs !! 14),(xs !! 15))
 								in [throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd,vt, alpha, beta,hx_body, hy_body, hz_body,p, q, r,0.0,0.0,axb, ayb, azb,0.0,0.0])
 ekf xs ys zs = (let (one, two, three) = ((y_ xs),(x_est_ ys zs),(k_function ys zs))
-								in (one ++ two ++ (reshape three )) )
-								--( (reshape (matrixSum (matrixProduct (three) (transpose (vectorMinus one (y_est_ (take 9 two)))) ) (transpose (take 9 two)) )) ++ (drop 9 two)) )
+								in (one ++ two ++ (reshape three) ++ (matrixSize [one]) ++ (matrixSize [two]) ++ (matrixSize three) )) 
 								
+								--( (reshape (matrixSum (matrixProduct (three) (transpose [vectorMinus one (y_est_ (take 9 two))]) ) (transpose [take 9 two]) )) ++  xs ) )
+								
+								
+								-- scrap ((reshape(transpose [one])) ++ two ++ (reshape three ) ++ one ++ (matrixSize (transpose [one])) ++ (matrixSize [two]) ++ (matrixSize three)))
+								--(
+								--note: [one] is 1x9, [two] is 1x22, three is 15x11
 
 -- y_ INPUT:
 -- xs - current time t:(index address into list)

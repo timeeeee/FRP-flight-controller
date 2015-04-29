@@ -3,6 +3,41 @@ Flight Systems
 Tim Clark and Angie Wright
 April 1st, 2015
 
+** April 29th
+1. k_function - needs built to reflect dynamic kalman filter
+		-- currently using pre-calculated fixed kalman gain matrix
+				(based on trim)
+2. navigationObserver
+3. unit testing
+4. verification of output comparison (graph for quad chart)
+5. timing tests and comparison (graphs for quad chart)
+		-- need extreme minimum possible for Gonzalo's (operates at 20 htz fixed)
+6. flight gear?? (for demo)
+7. tk1 (for demo in plane) 
+8. true system in tk1 with use serial port to file append emulator and run both programs at the same time?
+
+9. blog -- A. current state of non-linear control logic limits
+							places to improve speed and performance - kalman filter
+																											- ann
+																											- controller
+					 B. break out of our project is the kalman filter piece of this experiment 
+					 
+					 C. model to code mapping
+
+					 D. future is 	1. ann, 
+													2. controller
+													3. true embedded domain for serial i/o to the system for instrument sampling
+													(vs using serial emulator and file append - slow)
+									(use this in quad chart and blog)
+					 
+					 E. peron-hour estimation - lessons learned - projection of future work
+					 
+
+					
+					
+		
+
+
 ** april 6:
 1. bug - line 151 - each iteration is reducting the final output by two if the commented out function is in place.
 2. f_function - need to use common equations to build up this function (like h_function)
