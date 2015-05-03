@@ -223,5 +223,21 @@ navigationObserver :: [Float] -> [Float] -> [Float]	-> [Float]
 navigationObserver xs [] [] = (zeroVector 9)
 navigationObserver xs ys zs = (zeroVector 9)
 
+--gps_to_local
+--	lla_to_fe
+--	neg_gain
+--	one_over3048_gain
+--nav_ekf
+--	nav_y_est_
+--		nav_h_function
+--	nav_x_est_
+--		nav_f_function
+--		nav_gain_dt
+--	k_nav
+--	gps_rate_correction
+--nav_acc_gain
+--local_to_gps
+--local_speed
+--true_wind
 								
 								
