@@ -1,7 +1,8 @@
 module State_Functions
 (k_function
 ,f_function
-,h_function) where  
+,h_function
+,rateLimit) where  
 
 import Constants
 import Matrix_Ops
@@ -33,6 +34,9 @@ k_function xs ys = k_states
 
 
 --f_function INPUT:
+
+-- 
+
 -- xs - previous stateObserver ouput - time t-1					(index address into list)
 -- 								throttle, elevator, aileron, rudder 	(0,1,2,3)
 --								vt_est, alpha_est, beta_est, 					(4,5,6)
@@ -41,6 +45,7 @@ k_function xs ys = k_states
 --								biases_est													  (13,14)
 --								axb, ayb, azb, 												(15,16,17)
 --								alphaDot, alphaDot1										(18,19)
+
 
 -- ys - t-1 list of previous measurements			(index address into list)
 -- pilot commands throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd (0,1,2,3)
@@ -58,49 +63,65 @@ k_function xs ys = k_states
 --								accelX_o,accelY_o,accelZ_o						(15,16,17)
 --								alphaDot, alphaDot1,									(18,19)
 f_function :: [Float] -> [Float] -> [Float]
-f_function xs ys = [falpha_o xs]++ [falpha_o xs] ++ [fTHL_o xs ys] ++ [fEL_o xs ys] ++ [fAIL_o xs ys] ++ [fRDR_o xs ys] ++ [fVT_o xs]  ++ ys ++ [falpha_o xs] 
---   ++ [fbeta_o xs] ++ [fphi_o xs] ++ [ftheta_o xs] ++ [fpsi_o xs] ++ [fP_o xs] ++ [fQ_o xs] ++ [fR_o xs] ++ [falphab_o xs] ++ [fbetab_o xs]
+f_function xs ys = [fTHL_o xs ys] ++ [fEL_o xs ys] ++ [fAIL_o xs ys] ++ [fRDR_o xs ys] ++ 
+									 [fVT_o xs]  ++ [falpha_o xs] ++ [fbeta_o xs] ++ 
+									 [fphi_o xs] ++ [ftheta_o xs] ++ [fpsi_o xs] ++ 
+									 [fP_o xs] ++ [fQ_o xs] ++ [fR_o xs] ++ 
+									 [falphab_o xs] ++ [fbetab_o xs] ++ 
+									 [accelX_o xs] ++ [accelY_o xs] ++ [accelZ_o xs] ++ 
+									 [(xs !! 18)] ++ [falpha_o xs]
 
 fTHL_o :: [Float] -> [Float] -> Float
 fTHL_o xs ys = (let (throttle,throttle_cmd) = ((xs !! 0), (ys !! 0))
-								in aThrottle*throttle+bThrottle*throttle_cmd)
+								in aThrottle*throttle+bThrottle*(limitThrottle throttle_cmd))
 						 
 fEL_o :: [Float] -> [Float] -> Float
 fEL_o xs ys = (let (elevator,elevator_cmd) = ((xs !! 1), (ys !! 1))
-							 in aElevator*elevator+bElevator*elevator_cmd)
+							 in aElevator*elevator+bElevator*(limitElevator elevator_cmd))
 
 
 fAIL_o :: [Float] -> [Float] -> Float
 fAIL_o xs ys = (let (aileron,aileron_cmd) = ((xs !! 2), (ys !! 2))
-							  in aAileron*aileron+bAileron*aileron_cmd)
+							  in aAileron*aileron+bAileron*(limitAileron aileron_cmd))
 							 
 fRDR_o :: [Float] -> [Float] -> Float							
 fRDR_o xs ys = (let (rudder, rudder_cmd) = ((xs !! 3), (ys !! 3))
-								 in aRudder*rudder+bRudder*rudder_cmd)
+								 in aRudder*rudder+bRudder*(limitRudder rudder_cmd))
 
+								 						 
 fVT_o :: [Float] -> Float		
-fVT_o xs = ((u xs)*(uDot xs)+(v xs)*(vDot xs)+(w xs)*(wDot xs)/(xs !! 4))
+fVT_o xs = (((u xs)*(uDot xs)+(v xs)*(vDot xs)+(w xs)*(wDot xs))/(xs !! 4))
 
 falpha_o :: [Float] -> Float		
-falpha_o xs = (u xs)
---((u xs)*(wDot xs)-(w xs)*(uDot xs))/((u xs)^2+(w xs)^2)
--- ; %a alphadot state has to be incorporated later
+falpha_o xs = (((u xs)*(wDot xs) - (w xs) * (uDot xs))/((u xs)^2 + (w xs)^2))
 
+fbeta_o :: [Float] -> Float		
+fbeta_o xs = (((xs !! 4)*(vDot xs)-(v xs)*(fVT_o xs))/(((u xs)^2 + (w xs)^2)*(cos (xs !! 6))))
 
---fbeta_o xs =(VT_o*Vdot_o-V_o*fVT_o)/(U_o^2+W_o^2)*cos(beta_o);
---fphi_o xs =P_o+(R_o*cos(phi_o)+Q_o*sin(phi_o))*tan(theta_o);
---ftheta_o xs =Q_o*cos(phi_o)-R_o*sin(phi_o);
---fpsi_o xs =(R_o*cos(phi_o)+Q_o*sin(phi_o))/cos(theta_o);
---fP_o xs =(c2*P_o+c1*R_o)*Q_o+Qbar_o*S*b*(c3*Cl_o+c4*Cn_o);
---fQ_o xs =c5*P_o*R_o-c6*(P_o^2-R_o^2)+Qbar_o*S*Cbar*c7*Cm_o;
---fR_o xs =(c8*P_o-c2*R_o)*Q_o+Qbar_o*S*b*(c4*Cl_o+c9*Cn_o);
+fphi_o :: [Float] -> Float		
+fphi_o xs = ((xs !! 10)+((((xs !! 12))*(cos (xs !! 7))+((xs !! 11))*(sin (xs !! 7)))*(tan (xs !! 8))))
+
+ftheta_o :: [Float] -> Float		
+ftheta_o xs = ((((xs !! 11))*(cos (xs !! 7)))-(((xs !! 12))*(sin (xs !! 7))))
+
+fpsi_o :: [Float] -> Float		
+fpsi_o xs = ((((xs !! 12))*(cos (xs !! 7))+((xs !! 11))*(sin (xs !! 7)))/(cos (xs !! 8)))
+
+fP_o :: [Float] -> Float		
+fP_o xs = (((c8)*(xs !! 10)-(c2)*(xs !! 12))*(xs !! 11)+(qBar (xs !! 4))*s*b*((c4)*(cl_o xs)+(c9)*(cn_o xs)))
+
+fQ_o :: [Float] -> Float		
+fQ_o xs =((c5)*((xs !! 10))*((xs !! 12))-(c6)*(((xs !! 10))^2-((xs !! 12))^2)+(qBar (xs !! 4))*s*cBar*(c7)*(cm_o xs))
+
+fR_o :: [Float] -> Float		
+fR_o xs = (((c8)*((xs !! 10))-(c2)*((xs !! 12)))*((xs !! 11))+(qBar (xs !! 4))*s*b*((c4)*(cl_o xs)+(c9)*(cn_o xs)))
+
 
 falphab_o :: [Float] -> Float
 falphab_o xs = 0.0
 
 fbetab_o :: [Float] -> Float
 fbetab_o xs = 0.0
-
 
 
 
@@ -146,3 +167,107 @@ hHybody_o xs = (let (theta_o, psi_o, phi_o) = ((xs !! 4),(xs !! 5),(xs !! 3))
 hHzbody_o :: [Float] -> Float
 hHzbody_o xs = (let (theta_o, psi_o, phi_o) = ((xs !! 4),(xs !! 5),(xs !! 3))
 								in (hN0noaa*(cos(phi_o)*sin(theta_o)*cos(psi_o)+sin(phi_o)*sin(psi_o)))+(hE0noaa*(cos(phi_o)*sin(theta_o)*sin(psi_o)-sin(phi_o)*cos(psi_o)))+(hD0noaa*cos(phi_o)*cos(theta_o)))
+
+
+								
+--rateLimit adjusts the previous stateObserver output to impose limits 
+-- I am not sure why we are doing this at input over output...?
+rateLimit:: [Float] -> [Float]
+rateLimit xs = [limitThrottle (xs !! 0)] ++ [limitElevator (xs !! 1)] ++ [limitAileron (xs !! 2)] ++ [limitRudder (xs !! 3)] ++
+							 [limitVT (xs !! 4)] ++ [limitAlpha (xs !! 5)] ++ [limitBeta (xs !! 6)] ++ 
+							 [limitPhi (xs !! 7)] ++ [limitTheta (xs !! 8)] ++ [limitPsi (xs !! 9)] ++ 
+							 [limitP (xs !! 10)] ++ [limitQ (xs !! 11)] ++ [limitR (xs !! 12)] ++ 
+							 [limitBias1 (xs !! 13)] ++ [limitBias2 (xs !! 14)] ++ (drop 15 xs) 
+							 
+limitThrottle :: Float -> Float
+limitThrottle x
+   | x > throttleMax = throttleMax
+   | x < throttleMin = throttleMin
+   | otherwise       = x
+	 
+limitElevator :: Float -> Float
+limitElevator x
+   | x > elevatorMax = elevatorMax
+   | x < elevatorMin = elevatorMin
+   | otherwise       = x
+	 
+limitAileron :: Float -> Float
+limitAileron x
+   | x > aileronMax = aileronMax
+   | x < aileronMin = aileronMin
+   | otherwise      = x
+	 
+limitRudder :: Float -> Float
+limitRudder x
+   | x > rudderMax = rudderMax
+   | x < rudderMin = rudderMin
+   | otherwise     = x
+	 
+
+limitVT	:: Float -> Float
+limitVT x
+   | x > 200 				= 200
+   | x < (10*eps) 	= (10*eps)
+   | otherwise     	= x
+	 
+limitAlpha :: Float -> Float
+limitAlpha x
+   | x > (90*pi/180) 	= (90*pi/180)
+   | x < (-90*pi/180) = (-90*pi/180)
+   | otherwise     		= x
+
+limitBeta :: Float -> Float
+limitBeta x
+   | x > (90*pi/180) 	= (90*pi/180)
+   | x < (-90*pi/180) = (-90*pi/180)
+   | otherwise     		= x
+	 
+limitPhi :: Float -> Float
+limitPhi x
+   | x > pi 		= pi
+   | x < (-90) 	= (-pi)
+   | otherwise  = x
+	 
+limitTheta :: Float -> Float
+limitTheta x
+   | x > pi 		= pi
+   | x < (-90) 	= (-pi)
+   | otherwise  = x
+
+limitPsi :: Float -> Float
+limitPsi x
+   | x > (90*pi/180) 	= (90*pi/180)
+   | x < (-90*pi/180) = (-90*pi/180)
+   | otherwise     		= x	 
+	 
+limitP :: Float -> Float
+limitP x
+   | x > (900*pi/180) 	= (900*pi/180)
+   | x < (-900*pi/180) 	= (-900*pi/180)
+   | otherwise     			= x	 
+	 
+limitQ :: Float -> Float
+limitQ x
+   | x > (600*pi/180) 	= (600*pi/180)
+   | x < (-600*pi/180) 	= (-600*pi/180)
+   | otherwise  	   		= x	 
+	 
+limitR :: Float -> Float
+limitR x
+   | x > 200 		= 200
+   | x < (-200) = (-200)
+   | otherwise  = x	 
+
+limitBias1 :: Float -> Float
+limitBias1 x
+   | x > (30*pi/180) 	= (30*pi/180)
+   | x < (-30*pi/180) 	= (-30*pi/180)
+   | otherwise  	   		= x	 
+	 
+limitBias2 :: Float -> Float
+limitBias2 x
+   | x > (30*pi/180) 	= (30*pi/180)
+   | x < (-30*pi/180) 	= (-30*pi/180)
+   | otherwise  	   		= x	 
+	 
+

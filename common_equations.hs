@@ -14,22 +14,34 @@ module Common_Equations
 ,uDot
 ,vDot
 ,wDot
+,accelX_o
+,accelY_o
+,accelZ_o
+,qBar
+,cl_o
+,cn_o
+,cm_o
 ) where  
 
 import Constants
 
 --moment functions (used above in f_function)
-c1 :: Float -> Float
-c1 delta = ((((iyyB - izzB) * izzB) - (ixzB * ixzB)) / delta)
 
-c2 :: Float -> Float
-c2 delta = ((((ixxB - iyyB) + izzB) * ixzB) / delta)
+delta :: Float
+delta = ((ixxB * izzB) - (ixzB * ixzB))
 
-c3 :: Float -> Float
-c3 delta = (izzB / delta)
 
-c4 :: Float -> Float
-c4 delta = (ixzB / delta)
+c1 :: Float
+c1 = ((((iyyB - izzB) * izzB) - (ixzB * ixzB)) / delta)
+
+c2 :: Float
+c2 = ((((ixxB - iyyB) + izzB) * ixzB) / delta)
+
+c3 :: Float
+c3 = (izzB / delta)
+
+c4 :: Float
+c4 = (ixzB / delta)
 
 c5 :: Float
 c5 = ((izzB - ixxB) / iyyB)
@@ -40,14 +52,13 @@ c6 = (ixzB / iyyB)
 c7 :: Float
 c7 = (1 / iyyB)
 
-c8 :: Float -> Float
-c8 delta = ((((ixxB - iyyB) * ixxB) + (ixzB * ixzB)) / delta)
+c8 :: Float
+c8 = ((((ixxB - iyyB) * ixxB) + (ixzB * ixzB)) / delta)
 
 c9 :: Float
 c9 = (ixxB / delta)
 
-delta :: Float
-delta = ((ixxB * izzB) - (ixzB * ixzB))
+
 
 -- BODY VELOCITY COMPONENTS 
 -- these require vt alpha and beta

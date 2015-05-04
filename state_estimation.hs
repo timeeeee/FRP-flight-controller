@@ -24,7 +24,7 @@ import Data.List
 
 stateOutput :: [Float] -> [[Float]] -> [[Float]]
 stateOutput xs [] = [stateObserver xs [] [],	navigationObserver xs [] [], xs]
-stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs (ys !! 1) (ys !! 2), xs ]
+stateOutput xs ys = [stateObserver xs (rateLimit(ys !! 0)) (ys !! 2),	navigationObserver xs (ys !! 1) (ys !! 2), xs ]
 
 
 ----------------------------------------------------------------------------------
@@ -74,12 +74,16 @@ stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs
 -- zs is the k-1 measurement
 stateObserver :: [Float] -> [Float] -> [Float] -> [Float]
 stateObserver xs [] []  = gainBias(ekf (gainAcc xs) [] [])
-stateObserver xs ys zs = gainBias(ekf (gainAcc xs) ys zs)
+stateObserver xs ys zs = gainBias(ekf (gainAcc xs) ys zs)-- ++ matrixSize [gainBias(ekf (gainAcc xs) ys zs)]
+
+
+
 
 -- ** DONE adding gain to acceleration data to transform to g-force to fps2
 --split at acc and rebuild
 gainAcc :: [Float] -> [Float]
 gainAcc xs = let (begin,end) = splitAt 12 xs   in begin ++ [(g * (end !! 0))] ++ [g * (end !! 1)] ++ [g * (end !! 2)] ++ (drop 3 end)
+
 
 -- ** DONE adding gain to bias elements -- this is done to the final output of ekf
 --split at bias and rebuild
@@ -97,10 +101,13 @@ gainBias xs = let (begin,end) = splitAt 12 xs   in begin ++ [1 * (end !! 0)] ++ 
 --								axb, ayb, azb, 												(15,16,17)
 --								alphaDot, alphaDot1										(18,19)
 ekf :: [Float] -> [Float] -> [Float] -> [Float]	
+-- initial output of ekf for first iteration: NOTE** may want biases and alphadots intitialized to something other than zero **
 ekf xs [] [] = (let (vt, alpha, beta, p, q, r, hx_body, hy_body, hz_body, throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd, axb, ayb, azb) = ((xs !! 0), (xs !! 1),(xs !! 2),(xs !! 3),(xs !! 4),(xs !! 5),(xs !! 6),(xs !! 7),(xs !! 8),(xs !! 9),(xs !! 10),(xs !! 11),(xs !! 12),(xs !! 13),(xs !! 14),(xs !! 15))
 								in [throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd,vt, alpha, beta,hx_body, hy_body, hz_body,p, q, r,0.0,0.0,axb, ayb, azb,0.0,0.0])
-ekf xs ys zs = (let (one, two, three) = ((y_ xs),(x_est_ ys zs),(k_function ys zs))
-								in (one ++ two ++ (reshape three) ++ (matrixSize [one]) ++ (matrixSize [two]) ++ (matrixSize (matrixProduct (three) (transpose [vectorMinus one (y_est_ (take 15 two))]) ) ) )) 
+ekf xs ys zs = (let (one, two, three) = ((y_ xs), (x_est_ ys zs), (k_function ys zs))
+								in (vectorSum (reshape(matrixProduct (three) (transpose [(vectorMinus one (y_est_ two))]))) (take 15 two)) ++ (drop 15 two))
+--(let (one, two, three) = ((y_ xs),(x_est_ ys zs),(k_function ys zs))
+--								in (one ++ two ++ (reshape three) ++ (matrixSize [one]) ++ (matrixSize [two]) ++ (matrixSize (matrixProduct (three) (transpose [vectorMinus one (y_est_ (take 15 two))]) ) ) )) 
 								
 								--( (reshape (matrixSum (matrixProduct (three) (transpose [vectorMinus one (y_est_ (take 9 two))]) ) (transpose [take 9 two]) )) ++  xs ) )
 								
@@ -161,7 +168,7 @@ x_est_ xs ys = (let (f_out) = (f_function xs (drop 9 ys))
 
 -- multiply the vector with the constant value of dt								
 gainDt :: [Float] -> [Float]
-gainDt xs = vectorScalarProduct dt xs
+gainDt xs = (vectorScalarProduct dt xs)
 
 
 -- y_est_ INPUT:															

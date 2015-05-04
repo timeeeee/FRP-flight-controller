@@ -55,5 +55,5 @@ matrixSize :: Matrix -> Vector
 matrixSize m = [int2Float (numRows m)] ++ [int2Float (numColumns m)]
 
 reshape :: Matrix -> Vector
-reshape m = (m !! 0) ++ (m !! 1) ++ (m !! 2) ++ (m !! 3) ++ (m !! 4) ++ (m !! 5) ++ (m !! 6) ++ (m !! 7) ++ (m !! 8) 
+reshape m = (m !! 0) ++ (m !! 1) ++ (m !! 2) ++ (m !! 3) ++ (m !! 4) ++ (m !! 5) ++ (m !! 6) ++ (m !! 7) ++ (m !! 8) ++ (m !! 9) ++ (m !! 10) ++ (m !! 11) ++ (m !! 12) ++ (m !! 13) ++ (m !! 14)
 
