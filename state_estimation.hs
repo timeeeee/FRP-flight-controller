@@ -281,7 +281,7 @@ pre_ekf xs = (nav_gainAcc (gps_to_local xs))
 
 nav_ekf :: [Float] -> [Float] -> [Float]
 nav_ekf xs ys = (let (one, two, three) = ((y_nav (take 6 (drop 16 xs))),(x_est_nav xs ys),(k_nav_funct xs ys))
-								 in ((vectorSum (reshape6 (matrixProduct three (transpose [(gps_rate_correction one (vectorMinus one (y_est_nav two)))]))) two) ++ (drop 6 ys)))
+								 in ((vectorSum (reshape6 (matrixProduct three (transpose [(gps_rate_correction one (vectorMinus one (y_est_nav two)) ys)]))) two) ++ (drop 6 ys)))
 
 
 

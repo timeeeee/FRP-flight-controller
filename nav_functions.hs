@@ -129,8 +129,10 @@ y_est_nav :: [Float] -> [Float]
 y_est_nav xs = xs
 
 --INPUT: output from y_nav and result of addition of y_nav +- y_est_nav
-gps_rate_correction :: [Float]-> [Float] -> [Float]
-gps_rate_correction xs ys = xs
+gps_rate_correction :: [Float] -> [Float] -> [Float] -> [Float]
+gps_rate_correction xs ys zs = (if (((xs !! 0) - (zs !! 0)) == 0)
+																then [0.0,0.0,0.0,0.0,0.0,0.0]
+																else ys)
 
 
 
