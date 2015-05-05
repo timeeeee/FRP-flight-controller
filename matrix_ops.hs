@@ -9,6 +9,7 @@ module Matrix_Ops
 ,matrixProduct
 ,matrixSize
 ,reshape
+,reshape6
 ) where 
 -- source: http://www2.math.ou.edu/~dmccullough/teaching/f06-6833/haskell/matrix.pdf
 import Data.List
@@ -57,3 +58,5 @@ matrixSize m = [int2Float (numRows m)] ++ [int2Float (numColumns m)]
 reshape :: Matrix -> Vector
 reshape m = (m !! 0) ++ (m !! 1) ++ (m !! 2) ++ (m !! 3) ++ (m !! 4) ++ (m !! 5) ++ (m !! 6) ++ (m !! 7) ++ (m !! 8) ++ (m !! 9) ++ (m !! 10) ++ (m !! 11) ++ (m !! 12) ++ (m !! 13) ++ (m !! 14)
 
+reshape6 :: Matrix -> Vector
+reshape6 m = (m !! 0) ++ (m !! 1) ++ (m !! 2) ++ (m !! 3) ++ (m !! 4) ++ (m !! 5)
