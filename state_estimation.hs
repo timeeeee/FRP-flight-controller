@@ -25,9 +25,13 @@ import Data.List
 
 stateOutput :: [Float] -> [[Float]] -> [[Float]]
 stateOutput xs [] = [stateObserver xs [] [],	navigationObserver xs [] [], xs]
+<<<<<<< HEAD
 stateOutput xs ys = [stateObserver xs (rateLimit(ys !! 0)) (ys !! 2),	
 										 navigationObserver xs (ys !! 1) (ys !! 2), 
 										 xs]
+=======
+stateOutput xs ys = [stateObserver xs (ys !! 0) (ys !! 2),	navigationObserver xs (ys !! 1) (ys !! 2), xs ]
+>>>>>>> parent of bd026c8... state_observer is finished
 
 
 ----------------------------------------------------------------------------------
@@ -77,18 +81,26 @@ stateOutput xs ys = [stateObserver xs (rateLimit(ys !! 0)) (ys !! 2),
 -- ys is previous observer output, 
 -- zs is the k-1 measurement
 stateObserver :: [Float] -> [Float] -> [Float] -> [Float]
+<<<<<<< HEAD
 stateObserver xs [] []  = (ekf (gainAcc xs) [] [])
 stateObserver xs ys zs = (ekf (gainAcc xs) ys zs)
 
+=======
+stateObserver xs [] []  = gainBias(ekf (gainAcc xs) [] [])
+stateObserver xs ys zs = gainBias(ekf (gainAcc xs) ys zs)
+>>>>>>> parent of bd026c8... state_observer is finished
 
 -- ** DONE adding gain to acceleration data to transform to g-force to fps2
 --split at acc and rebuild
 gainAcc :: [Float] -> [Float]
 gainAcc xs = (take 13 xs) ++ (accelerate (take 3 (drop 13 xs))) ++ (drop 16 xs)
 
+<<<<<<< HEAD
 accelerate :: [Float] -> [Float]
 accelerate xs = [(g * (xs !! 0))] ++ [g * (xs !! 1)] ++ [g * (xs !! 2)]
 
+=======
+>>>>>>> parent of bd026c8... state_observer is finished
 -- ** DONE adding gain to bias elements -- this is done to the final output of ekf
 --split at bias and rebuild
 gainBias :: [Float] -> [Float]
@@ -106,8 +118,8 @@ gainBias xs = (let (begin,end) = splitAt 13 xs
 --								axb, ayb, azb, 												(15,16,17)
 --								alphaDot, alphaDot1										(18,19)
 ekf :: [Float] -> [Float] -> [Float] -> [Float]	
--- initial output of ekf for first iteration: NOTE** may want biases and alphadots intitialized to something other than zero **
 ekf xs [] [] = (let (vt, alpha, beta, p, q, r, hx_body, hy_body, hz_body, throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd, axb, ayb, azb) = ((xs !! 0), (xs !! 1),(xs !! 2),(xs !! 3),(xs !! 4),(xs !! 5),(xs !! 6),(xs !! 7),(xs !! 8),(xs !! 9),(xs !! 10),(xs !! 11),(xs !! 12),(xs !! 13),(xs !! 14),(xs !! 15))
+<<<<<<< HEAD
 								in [throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd,
 										vt, alpha, beta,
 										hx_body, hy_body, hz_body,
@@ -127,6 +139,18 @@ ekf xs ys zs = (let (one, two, three) = ((y_ xs), (x_est_ ys zs), (k_function ys
 -- sample of rateLimited
 -- 0.15,			0.2618,				-0.3491,		-0.1745,200.0,-1.5707964,1.5707964,-3.1415927,-3.1415927,1.5707964,-15.707963,-10.471976,-200.0,0.5235988,-0.5235988,8310.7705,2852.8403,7253.87,0.0,32.1303
 
+=======
+								in [throttle_cmd, elevator_cmd, aileron_cmd, rudder_cmd,vt, alpha, beta,hx_body, hy_body, hz_body,p, q, r,0.0,0.0,axb, ayb, azb,0.0,0.0])
+ekf xs ys zs = (let (one, two, three) = ((y_ xs),(x_est_ ys zs),(k_function ys zs))
+								in (one ++ two ++ (reshape three) ++ (matrixSize [one]) ++ (matrixSize [two]) ++ (matrixSize (matrixProduct (three) (transpose [vectorMinus one (y_est_ (take 15 two))]) ) ) )) 
+								
+								--( (reshape (matrixSum (matrixProduct (three) (transpose [vectorMinus one (y_est_ (take 9 two))]) ) (transpose [take 9 two]) )) ++  xs ) )
+								
+								
+								-- scrap ((reshape(transpose [one])) ++ two ++ (reshape three ) ++ one ++ (matrixSize (transpose [one])) ++ (matrixSize [two]) ++ (matrixSize three)))
+								--(
+								--note: [one] is 1x9, [two] is 1x22, three is 15x11
+>>>>>>> parent of bd026c8... state_observer is finished
 
 -- y_ INPUT:
 -- xs - current time t:(index address into list)
@@ -180,7 +204,7 @@ x_est_ xs ys = (let (f_out) = (f_function xs (drop 9 ys))
 
 -- multiply the vector with the constant value of dt								
 gainDt :: [Float] -> [Float]
-gainDt xs = (vectorScalarProduct dt xs)
+gainDt xs = vectorScalarProduct dt xs
 
 
 -- y_est_ INPUT:															
